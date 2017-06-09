@@ -82,6 +82,10 @@ action :attach do
         raise "Volume with id #{vol[:volume_id]} exists but is attached to instance #{attachment[:instance_id]}"
       else
         Chef::Log.debug('Volume is already attached')
+        converge_by("update the node data with volume id: #{vol[:volume_id]}") do
+          node.normal['aws']['ebs_volume'][new_resource.name]['volume_id'] = vol[:volume_id]
+          node.save
+        end        
       end
     end
   else
